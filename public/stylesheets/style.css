@@ -41,3 +41,7 @@ nav ul {
 nav li {
 	display: inline;
 }
+
+figure {
+	float: left;
+}
