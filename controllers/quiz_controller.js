@@ -18,10 +18,22 @@ exports.load = function (req, res, next, quizId) {
 
 
 // GET /quizes
-exports.index = function (req, res) {
-	models.Quiz.findAll().then(function (quizes) {
-		res.render('quizes/index.ejs', {quizes: quizes, title: 'Preguntas'});
-	});
+exports.index = function (req, res) {	
+	
+	if (req.query.search) {
+		models.Quiz.findAll(
+			{where: ['pregunta like ?', '%'+req.query.search+'%'],
+			 order:[['pregunta', 'ASC']]}
+		).then(function (quizes) { // Se recupera todas las preguntas que coinciden la búsqueda
+			res.render('quizes/index.ejs', {quizes: quizes, title: 'Preguntas'});
+		});
+	} else{
+		models.Quiz.findAll().then(function (quizes) { // Se recupera todas las preguntas
+			res.render('quizes/index.ejs', {quizes: quizes, title: 'Preguntas'});
+		});
+	}
+
+	
 };
 
 // GET /quizes/:id
