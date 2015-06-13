@@ -19,6 +19,11 @@ body {
 	color: black;
 }
 
+#ErrorMsgs {
+	color: #f61;
+	font-size: smaller;
+}
+
 section > div {
 	padding: 20px;
 }

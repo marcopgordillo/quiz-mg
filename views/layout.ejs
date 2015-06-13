@@ -24,6 +24,14 @@
 		</nav>
 
 		<section class="main" id="s1">
+			<% if (errors.length) { %>
+				<p id="ErrorMsgs">
+					Corregir Errores:<br />
+					<% for (var i in errors) { %>
+						<span><%= errors[i].message %></span>
+					<% } %>
+				</p>
+			<% } %>
 			<div><%- body %></div>
 		</section>
 
@@ -31,6 +39,8 @@
 			<a href="http://es.wikipedia.org/wiki/Quiz">¿Qué es un Quiz?</a>
 			<a href="https://github.com/marcopgordillo/quiz-mg">Repositorio GITHUB</a>
 		</footer>
-	</div>	
+	</div>
+	<script src="http://zeptojs.com/zepto.min.js"></script>	
+	<script src="/javascripts/script.js"></script>
 </body>
 </html>
