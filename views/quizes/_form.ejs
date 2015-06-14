@@ -1,10 +1,35 @@
 <p>
 	<label class="rem" for="preg">Pregunta:</label>
-	<input type="text" id="preg" name="quiz[pregunta]" value="<%= quiz.pregunta %>" placeholder="<%= quiz.pregunta %>" />
+	<input type="text" id="preg" name="quiz[pregunta]"
+	<% if (edit) { %>
+			value="<%= quiz.pregunta %>"
+		<% } else { %>
+			placeholder="<%= quiz.pregunta %>" 
+		<% } %> 
+	/>
 </p>
 <p>
 	<label class="rem" for="resp">Respuesta:</label>
-	<input type="text" id="resp" name="quiz[respuesta]" value="<%= quiz.respuesta %>" placeholder="<%= quiz.respuesta %>" />
+	<input type="text" id="resp" name="quiz[respuesta]"
+		<% if (edit) { %>
+			value="<%= quiz.respuesta %>"
+		<% } else { %>
+			placeholder="<%= quiz.respuesta %>" 
+		<% } %> 
+	/>
+</p>
+<p>
+	<label for="tema">Tema de la pregunta:</label>
+	<select name="quiz[tema]" id="tema">
+		<option value="">--Selectione--</option>
+		<% var i; for(var i in temas) { 
+			var selected = '';
+			if (quiz.tema === temas[i].id)
+				selected = 'selected';			
+			%>				
+			<option value="<%= temas[i].id %>" <%= selected %>><%= temas[i].tema %></option>
+		<% } %>
+	</select>
 </p>
 <p>
 	<a href="/quizes"><button type="button">Cancelar</button></a>

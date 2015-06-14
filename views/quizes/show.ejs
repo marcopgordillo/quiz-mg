@@ -1,4 +1,12 @@
 <form method="get" action="/quizes/<%= quiz.id %>/answer">
+	<%
+		var categoria = "";
+		for(var i in temas){			
+			if (temas[i].id === quiz.tema)
+				categoria = temas[i].tema;
+		}
+	%>
+	<p>Categoría: <%= categoria %></p>
 	<label for="respuesta">Pregunta: <%= quiz.pregunta %></label>
 	<input type="text" id="respuesta" name="respuesta" placeholder="Responda aquí" />
 	<input type="submit" value="Envíar" />
