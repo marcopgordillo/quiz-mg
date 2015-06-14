@@ -23,7 +23,7 @@ exports.load = function (req, res, next, quizId) {
 
 
 // GET /quizes
-exports.index = function (req, res) {	
+exports.index = function (req, res, next) {	
 	
 	if (req.query.search) {
 		models.Quiz.findAll(
@@ -65,7 +65,7 @@ exports.new = function (req, res) {
 };
 
 // POST /quizes/create
-exports.create = function (req, res) {
+exports.create = function (req, res, next) {
 	var quiz = models.Quiz.build( req.body.quiz );
 	
 	quiz
@@ -92,7 +92,7 @@ exports.edit = function (req, res) {
 };
 
 // PUT /quizes/:id
-exports.update = function (req, res) {
+exports.update = function (req, res, next) {
 	req.quiz.pregunta = req.body.quiz.pregunta;
 	req.quiz.respuesta = req.body.quiz.respuesta;
 	req.quiz.tema = req.body.quiz.tema;
@@ -129,7 +129,7 @@ exports.temas = function (req, res) {
 };
 
 // GET /quizes/temas/:id
-exports.showtemas = function (req, res) {
+exports.showtemas = function (req, res, next) {
 	var temashow = "";
 	
 	for (var i in temas) {
