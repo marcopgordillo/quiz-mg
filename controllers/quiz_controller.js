@@ -9,7 +9,10 @@ var temas = [ {id:1, tema:"Otro"},
 
 // Autoload -> factoriza el código si ruta incluye :quizId
 exports.load = function (req, res, next, quizId) {
-	models.Quiz.findById(quizId)
+	models.Quiz.find({
+					where: { id: Number(quizId) },
+				 	include: [{ model: models.Comment}]
+				})
 				.then(function (quiz) {
 					if (quiz) {
 						req.quiz = quiz;
@@ -69,20 +72,20 @@ exports.create = function (req, res, next) {
 	var quiz = models.Quiz.build( req.body.quiz );
 	
 	quiz
-		.validate()
-		.then(function (err) {
-			if (err) {
-				res.render('quizes/new', {quiz: quiz, temas: temas, edit: false, title: 'Añadir', errors: err.errors});
-			} else{
-				// guarda en DB los campos pregunta y respuesta de quiz
-				quiz
-					.save({fields:['pregunta', 'respuesta', 'tema']})
-					.then(function () {
-						res.redirect('/quizes');	// Redirección HTTP (URL relativo) a lista de preguntas
-					})
-					.catch(function(error) { next(error);});
-			}
-		});	
+	.validate()
+	.then(function (err) {
+		if (err) {
+			res.render('quizes/new', {quiz: quiz, temas: temas, edit: false, title: 'Error', errors: err.errors});
+		} else{
+			// guarda en DB los campos pregunta y respuesta de quiz
+			quiz
+				.save({fields:['pregunta', 'respuesta', 'tema']})
+				.then(function () {
+					res.redirect('/quizes');	// Redirección HTTP (URL relativo) a lista de preguntas
+				})
+				.catch(function(error) { next(error);});
+		}
+	});	
 };
 
 // GET /quizes/:id/edit
@@ -101,7 +104,7 @@ exports.update = function (req, res, next) {
 	.validate()
 	.then(function (err) {
 		if (err) {
-			res.render('quizes/edit', {quiz: req.quiz, title: 'Editar', errors: err.errors});
+			res.render('quizes/edit', {quiz: req.quiz, title: 'Error', errors: err.errors});
 		} else{
 			req.quiz
 			.save({fields:['pregunta', 'respuesta', 'tema']})

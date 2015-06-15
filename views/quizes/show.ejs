@@ -11,3 +11,12 @@
 	<input type="text" id="respuesta" name="respuesta" placeholder="Responda aquí" />
 	<input type="submit" value="Envíar" />
 </form>
+
+<p>
+	<a href="/quizes/<%= quiz.id %>/comments/new"><button>Nuevo Comentario</button></a>
+</p>
+
+<p><strong>Comentarios:</strong></p>
+<% for (index in quiz.Comments) { %>
+	<p>- <%= quiz.Comments[index].texto %></p>
+<% } %>
