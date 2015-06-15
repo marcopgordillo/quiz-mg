@@ -50,3 +50,7 @@ nav li {
 figure {
 	float: left;
 }
+
+.right {
+	float: right;
+}
