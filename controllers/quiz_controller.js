@@ -1,12 +1,5 @@
 var models = require('../models/models');
 
-var temas = [ {id:1, tema:"Otro"},
-			  {id:2, tema:"Humanidades"},
-			  {id:3, tema:"Ocio"},
-			  {id:4, tema:"Ciencia"},
-			  {id:5, tema:"Tecnología"}
-			];
-
 // Autoload -> factoriza el código si ruta incluye :quizId
 exports.load = function (req, res, next, quizId) {
 	models.Quiz.find({
@@ -16,12 +9,27 @@ exports.load = function (req, res, next, quizId) {
 				.then(function (quiz) {
 					if (quiz) {
 						req.quiz = quiz;
-						next();
+						//next();
 					} else{
 						next(new Error('No existe QuizId' + quizId));
 					}
 				})
-				.catch(function (error) { next(error); });
+				.then(function () {
+					models.Tema.find({
+							where: { id: Number(req.quiz.TemaId) },
+							attributes: ['tema']
+					})
+					.then(function (tema) {
+						if (tema) {
+							req.quiz.tema = tema.tema;
+							next();
+						} else{
+							next(new Error('No existe TemaId' + req.quiz.TemaId));
+						}
+					})
+					.catch(function (error) { next(error); });
+				})
+				.catch(function (error) { next(error); });	
 };
 
 
@@ -33,20 +41,18 @@ exports.index = function (req, res, next) {
 			{where: ['pregunta like ?', '%'+req.query.search.replace(" ","%")+'%'],
 			 order:[['pregunta', 'ASC']]}
 		).then(function (quizes) { // Se recupera todas las preguntas que coinciden la búsqueda
-			res.render('quizes/index.ejs', {quizes: quizes, title: 'Preguntas', errors: []});
+			res.render('quizes/index', {quizes: quizes, title: 'Preguntas', errors: []});
 		}).catch(function(error) { next(error);});
 	} else{
 		models.Quiz.findAll().then(function (quizes) { // Se recupera todas las preguntas
-			res.render('quizes/index.ejs', {quizes: quizes, title: 'Preguntas', errors: []});
+			res.render('quizes/index', {quizes: quizes, title: 'Preguntas', errors: []});
 		}).catch(function(error) { next(error);});
-	}
-
-	
+	}	
 };
 
 // GET /quizes/:id
 exports.show = function (req, res) {
-	res.render('quizes/show', {quiz: req.quiz, temas: temas, title: 'Preguntas', errors: []});	
+	res.render('quizes/show', {quiz: req.quiz, tema: req.quiz.tema, title: 'Preguntas', errors: []});	
 };
 
 // GET /quizes/:id/answer
@@ -61,10 +67,12 @@ exports.answer = function (req, res) {
 // GET /quizes/new
 exports.new = function (req, res) {
 	var quiz = models.Quiz.build( // crea el objeto quiz
-		{pregunta: "Pregunta", respuesta: "Respuesta"}
+		{pregunta: "Pregunta", respuesta: "Respuesta", TemaId: null}
 	);
-			
-	res.render('quizes/new', {quiz: quiz, temas: temas, edit: false, title: 'Añadir', errors: []});	
+
+	models.Tema.findAll().then(function (temas) { // Se recupera todos los temas			
+			res.render('quizes/new', {quiz: quiz, temas: temas, edit: false, title: 'Añadir', errors: []});	
+		}).catch(function(error) { next(error);});	
 };
 
 // POST /quizes/create
@@ -75,11 +83,13 @@ exports.create = function (req, res, next) {
 	.validate()
 	.then(function (err) {
 		if (err) {
-			res.render('quizes/new', {quiz: quiz, temas: temas, edit: false, title: 'Error', errors: err.errors});
+			models.Tema.findAll().then(function (temas) { // Se recupera todos los temas			
+				res.render('quizes/new', {quiz: quiz, temas: temas, edit: false, title: 'Error', errors: err.errors});
+			}).catch(function(error) { next(error);});			
 		} else{
 			// guarda en DB los campos pregunta y respuesta de quiz
 			quiz
-				.save({fields:['pregunta', 'respuesta', 'tema']})
+				.save({fields:['pregunta', 'respuesta', 'TemaId']})
 				.then(function () {
 					res.redirect('/quizes');	// Redirección HTTP (URL relativo) a lista de preguntas
 				})
@@ -91,23 +101,30 @@ exports.create = function (req, res, next) {
 // GET /quizes/:id/edit
 exports.edit = function (req, res) {
 	var quiz = req.quiz;
-	res.render('quizes/edit', {quiz: quiz, temas: temas, edit: true, title: 'Editar', errors: []});
+	
+	models.Tema.findAll().then(function (temas) { // Se recupera todos los temas			
+			res.render('quizes/edit', {quiz: quiz, temas: temas, edit: true, title: 'Editar', errors: []});
+		}).catch(function(error) { next(error);});	
+	
 };
 
 // PUT /quizes/:id
 exports.update = function (req, res, next) {
 	req.quiz.pregunta = req.body.quiz.pregunta;
 	req.quiz.respuesta = req.body.quiz.respuesta;
-	req.quiz.tema = req.body.quiz.tema;
+	req.quiz.TemaId = req.body.quiz.TemaId;
 
 	req.quiz
 	.validate()
 	.then(function (err) {
 		if (err) {
-			res.render('quizes/edit', {quiz: req.quiz, title: 'Error', errors: err.errors});
+			models.Tema.findAll().then(function (temas) { // Se recupera todos los temas			
+				res.render('quizes/edit', {quiz: req.quiz, temas: temas, edit: true, title: 'Error', errors: err.errors});
+			}).catch(function(error) { next(error);});
+			
 		} else{
 			req.quiz
-			.save({fields:['pregunta', 'respuesta', 'tema']})
+			.save({fields:['pregunta', 'respuesta', 'TemaId']})
 			.then(function () {
 				res.redirect('/quizes');	// Redirección HTTP (URL relativo) a lista de preguntas
 			})
@@ -124,27 +141,4 @@ exports.destroy = function (req, res) {
 		res.redirect('/quizes');
 	})
 	.catch(function(error) { next(error);});
-};
-
-// GET /quizes/temas
-exports.temas = function (req, res) {
-	res.render('quizes/temas', {temas: temas, title: 'Temas', errors: []});
-};
-
-// GET /quizes/temas/:id
-exports.showtemas = function (req, res, next) {
-	var temashow = "";
-	
-	for (var i in temas) {
-		if (parseInt(req.params.temaId) === temas[i].id) {
-			temashow = temas[i].tema;
-		}
-	}
-	
-	models.Quiz.findAll(
-			{where: ['tema = ?', req.params.temaId],
-			 order:[['pregunta', 'ASC']]}
-		).then(function (quizes) { // Se recupera todas las preguntas que coinciden la búsqueda
-			res.render('quizes/index', {quizes: quizes, title: temashow, errors: []});
-		}).catch(function(error) { next(error);});	
 };

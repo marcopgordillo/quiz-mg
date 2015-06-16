@@ -1,0 +1,14 @@
+<p>
+	<label class="rem" for="tema">Tema:</label>
+	<input type="text" id="preg" name="tema[tema]"
+	<% if (edit) { %>
+			value="<%= tema.tema %>"
+		<% } else { %>
+			placeholder="<%= tema.tema %>" 
+		<% } %> 
+	/>
+</p>
+<p>
+	<a href="/quizes/temas"><button type="button">Cancelar</button></a>
+	<input type="submit" value="Guardar" />
+</p>

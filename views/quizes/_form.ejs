@@ -20,11 +20,11 @@
 </p>
 <p>
 	<label for="tema">Tema de la pregunta:</label>
-	<select name="quiz[tema]" id="tema">
+	<select name="quiz[TemaId]" id="tema">
 		<option value="">--Selectione--</option>
-		<% var i; for(var i in temas) { 
+		<% for(var i in temas) {
 			var selected = '';
-			if (quiz.tema === temas[i].id)
+			if (quiz.TemaId === temas[i].id)
 				selected = 'selected';			
 			%>				
 			<option value="<%= temas[i].id %>" <%= selected %>><%= temas[i].tema %></option>
