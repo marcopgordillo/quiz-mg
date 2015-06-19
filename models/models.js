@@ -1,4 +1,5 @@
 var path = require('path');
+var hashpw = require('../controllers/mw_controller').hashpw;
 
 // Postgres DATABASE_URL = postgress://user:password@host:port/database
 // SQLite   DATABASE_URL = sqlite://:@:/
@@ -37,6 +38,9 @@ var Comment = sequelize.import(path.join(__dirname, 'comment'));
 // Importar la definición de la tabla Tema
 var Tema = sequelize.import(path.join(__dirname, 'tema'));
 
+// Importar la definición de la tabla User
+var User = sequelize.import(path.join(__dirname, 'user'));
+
 // Indicar la relación 1-N, que añade la columna QuizId en la tabla Comment que contiene la clave externa (foreign key)
 // que indica que quiz está asociado con un comentario.
 Comment.belongsTo(Quiz);	// Indica que un Comment pertenece a un Quiz
@@ -49,21 +53,12 @@ Tema.hasMany(Quiz);			// Indica que un Tema puede tener muchos quizes.
 exports.Quiz = Quiz;
 exports.Comment = Comment;
 exports.Tema = Tema;
+exports.User = User;
 
 // sequelize.sync() crea e inicializa la tabla de preguntas en BDD
 
 sequelize.sync().then(function () {
-	// then(..) ejecuta el manejador una vez creada la tabla.
-	Quiz.count().then(function (count) {
-		if (count === 0) { // La tabla se inicializa solo si eśtá vacía.
-			Quiz.create({pregunta: '¿Capital de Italia?', respuesta: 'Roma'});
-			Quiz.create({pregunta: '¿Capital de Portugal?', respuesta: 'Lisboa'})
-				.then(function () {
-					console.log('Tabla Quiz incializada');
-				});
-		}
-	});
-
+	
 	// Inicializa la tabla Tema
 	Tema.count().then(function (count) {
 		if (count === 0) { // La tabla se inicializa solo si eśtá vacía.
@@ -77,6 +72,29 @@ sequelize.sync().then(function () {
 				});
 		}
 	});
+
+	// then(..) ejecuta el manejador una vez creada la tabla.
+	Quiz.count().then(function (count) {
+		if (count === 0) { // La tabla se inicializa solo si eśtá vacía.
+			Quiz.create({pregunta: '¿Capital de Italia?', respuesta: 'Roma', TemaId: 1});
+			Quiz.create({pregunta: '¿Capital de Portugal?', respuesta: 'Lisboa', TemaId: 1})
+				.then(function () {
+					console.log('Tabla Quiz incializada');
+				});
+		}
+	});
+
+	// Inicializa la tabla User
+	User.count().then(function (count) {
+		if (count === 0) { // La tabla se inicializa solo si eśtá vacía.
+			User.create({username: 'admin', password: hashpw('123456')});
+			User.create({username: 'pepe', password: hashpw('654321')})
+				.then(function () {
+					console.log('Tabla User incializada');
+				});
+		}
+	});
+
 	/*Quiz.destroy({
 		where: {
     		id: 1

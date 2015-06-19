@@ -1,0 +1,24 @@
+<p>
+	<label class="rem" for="username">Username:</label>
+	<input type="text" id="username" name="user[username]"
+	<% if (edit) { %>
+			value="<%= user.username %>"
+		<% } else { %>
+			placeholder="<%= user.username %>"
+		<% } %>
+	/>
+</p>
+<p>
+	<label class="rem" for="password">Password:</label>
+	<input type="password" id="password" name="user[password]"
+		<% if (edit) { %>
+			value=""
+		<% } else { %>
+			placeholder="<%= user.password %>"
+		<% } %> 
+	/>
+</p>
+<p>
+	<a href="/admin/users"><button type="button">Cancelar</button></a>
+	<input type="submit" value="Guardar" />
+</p>

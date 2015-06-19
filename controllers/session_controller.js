@@ -13,6 +13,7 @@ exports.create = function (req, res) {
 
 	var userController = require('./user_controller');
 	userController.autenticar(login, password, function (error, user) {
+		
 		if (error) { // Si hay error retornamos mensajes de error de sessión
 			req.session.errors = [{'message': 'Se ha producido un error: '+error}];
 			res.redirect('/login');
@@ -28,8 +29,10 @@ exports.create = function (req, res) {
 };
 
 // GET /logout -- Destruir sesión
-exports.destroy = function (req, res) {
-	delete req.session.user;
+exports.destroy = function (req, res) {	
+	if (req.session) {		
+		delete req.session.user;		
+	}
 	res.redirect(req.session.redir.toString()); //redirect a path anterior a login
 };
 

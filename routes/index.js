@@ -5,6 +5,7 @@ var quizController = require('../controllers/quiz_controller');
 var commentController = require('../controllers/comment_controller');
 var sessionController = require('../controllers/session_controller');
 var temaController = require('../controllers/tema_controller');
+var userController = require('../controllers/user_controller');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -24,10 +25,21 @@ router.param('commentId',					commentController.load);	// Autoload :commentId
 // Autoload de comandos con :temaId
 router.param('temaId',						temaController.load);	// Autoload :temaId
 
+// Autoload de comandos con :userId
+router.param('userId',						userController.load);	// Autoload :userId
+
 // Definición de rutas de session
 router.get('/login', 						sessionController.new);	// formulario login
 router.post('/login', 						sessionController.create);	// crear sesión
-router.delete('/logout', 						sessionController.destroy);	// destruír sesión
+router.delete('/logout', 					sessionController.destroy);	// destruír sesión
+router.get('/admin/users',					sessionController.loginRequired, userController.index);	// Listado de usuarios
+router.get('/admin/users/new',				sessionController.loginRequired, userController.new);	// Formulario Crear Usuarios
+router.post('/admin/users/create',			sessionController.loginRequired, userController.create);	// Crear Usuarios
+router.get('/admin/users/:userId(\\d+)',	sessionController.loginRequired, userController.show);	// Formulario Perfil Usuarios
+router.get('/admin/users/:userId(\\d+)/edit',
+											sessionController.loginRequired, userController.edit);	// Formulario Editar Usuarios
+router.put('/admin/users/:userId(\\d+)',	sessionController.loginRequired, userController.update);	// Actualizar Usuarios
+router.delete('/admin/users/:userId(\\d+)',	sessionController.loginRequired, userController.destroy);	// Eliminar Usuarios
 
 // Definición de rutas de /quizes
 router.get('/quizes', 						quizController.index);
