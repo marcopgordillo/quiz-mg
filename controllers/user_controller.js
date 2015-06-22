@@ -123,6 +123,5 @@ exports.destroy = function (req, res, next) {
 	.then(function () {
 		res.redirect('/admin/users');
 	})
-	.catch(function(error) { next(error);});
-	
+	.catch(function(error) { next(error);});	
 };

@@ -32,6 +32,8 @@ router.param('userId',						userController.load);	// Autoload :userId
 router.get('/login', 						sessionController.new);	// formulario login
 router.post('/login', 						sessionController.create);	// crear sesión
 router.delete('/logout', 					sessionController.destroy);	// destruír sesión
+
+// Definición rutas de administración de usuarios
 router.get('/admin/users',					sessionController.loginRequired, userController.index);	// Listado de usuarios
 router.get('/admin/users/new',				sessionController.loginRequired, userController.new);	// Formulario Crear Usuarios
 router.post('/admin/users/create',			sessionController.loginRequired, userController.create);	// Crear Usuarios
@@ -50,6 +52,7 @@ router.post('/quizes/create', 				sessionController.loginRequired, quizControlle
 router.get('/quizes/:quizId(\\d+)/edit', 	sessionController.loginRequired, quizController.edit);
 router.put('/quizes/:quizId(\\d+)', 		sessionController.loginRequired, quizController.update);
 router.delete('/quizes/:quizId(\\d+)', 		sessionController.loginRequired, quizController.destroy);
+router.get('/quizes/statistics',			quizController.stats);		// Estadísticas de uso
 
 // Definición de rutas de Comentarios
 router.get('/quizes/:quizId(\\d+)/comments/new',	commentController.new);

@@ -1,0 +1,20 @@
+<table>
+	<tr>
+		<th>Valor</th><th>Cantidad</th>
+	</tr>
+	<tr>
+		<td>Número total de Preguntas:</td><td><%= stats.quizes %></td>
+	</tr>
+	<tr>
+		<td>Número total de Comentarios:</td><td><%= stats.comments %></td>
+	</tr>
+	<tr>
+		<td>Número medio de Comentarios por pregunta:</td><td><%= +(stats.comments/stats.quizes).toFixed(2) %></td>
+	</tr>
+	<tr>
+		<td>Número Preguntas sin comentarios:</td><td><%= stats.quizes-stats.comUnicos %></td>
+	</tr>
+	<tr>
+		<td>Número Preguntas con comentarios:</td><td><%= stats.comUnicos %></td>
+	</tr>
+</table>

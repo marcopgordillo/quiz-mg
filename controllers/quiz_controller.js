@@ -142,3 +142,22 @@ exports.destroy = function (req, res) {
 	})
 	.catch(function(error) { next(error);});
 };
+
+// GET /quizes/statistics
+exports.stats = function (req, res, next) {
+	var stats = {};
+		
+	models.Quiz.count()
+		.then(function (count) {
+			stats.quizes = count;
+			return models.Comment.count();
+		})
+		.then(function (count) {
+			stats.comments = count;
+			return models.Comment.getCountCommented();
+		})
+		.then(function (count) {			
+			stats.comUnicos = count[0].count;		
+			res.render('quizes/statistics', {stats: stats, title: 'Estadísticas', errors: []});				
+		}).catch(function(error){next(error);});
+};

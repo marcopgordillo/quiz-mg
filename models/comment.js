@@ -11,6 +11,19 @@ module.exports = function (sequelize, DataTypes) {
 		  	{ type: DataTypes.BOOLEAN,
 		  	  defaultValue: false
 		  	}
+		},
+		{
+			classMethods: {
+			      getCountCommented: function () {				
+					return sequelize.query('SELECT count(distinct "QuizId") as count FROM "Comments"',
+						{ type: sequelize.QueryTypes.SELECT }
+					);
+				  },
+			      method2: function() {}
+			    },
+		    instanceMethods: {
+		      method3: function() {}
+		    }
 		}
 	);
 };

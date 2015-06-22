@@ -25,9 +25,11 @@ var sequelize = new Sequelize(DB_name, user, pwd,
 			port: 		port,
 			host: 		host,
 			storage: 	storage, 	// Solo SQLite (.env)
-			omitNull: 	true		// Solo Postgress
+			omitNull: 	true		// Solo Postgress			
 		}
 	);
+
+
 
 // Importar  y exportar la definición de la tabla Quiz en quiz.js
 var Quiz = sequelize.import(path.join(__dirname, 'quiz'));
@@ -44,16 +46,29 @@ var User = sequelize.import(path.join(__dirname, 'user'));
 // Indicar la relación 1-N, que añade la columna QuizId en la tabla Comment que contiene la clave externa (foreign key)
 // que indica que quiz está asociado con un comentario.
 Comment.belongsTo(Quiz);	// Indica que un Comment pertenece a un Quiz
-Quiz.hasMany(Comment); 		// Indica que un Quiz puede tener muchos comments.
+Quiz.hasMany(Comment, // Indica que un Quiz puede tener muchos comments.
+	{
+		'constraints': true,
+		'onUpdate': 'cascade',	//Elimina tambien los comentarios cuando se elimina la pregunta.
+		'onDelete': 'cascade',	//Elimina tambien los comentarios cuando se elimina la pregunta.
+		'hooks': true
+	});
 
 Quiz.belongsTo(Tema);		// Indica que un Quiz pertenece a un Tema.
-Tema.hasMany(Quiz);			// Indica que un Tema puede tener muchos quizes.
+Tema.hasMany(Quiz,
+	{
+		'constraints': true,
+		'onUpdate': 'cascade',	//Elimina tambien las preguntas junto con la categoría.
+		'onDelete': 'cascade',	//Elimina tambien los preguntas junto con la categoría.
+		'hooks': true
+	});			// Indica que un Tema puede tener muchos quizes.
 
 // Exportar las tablas
 exports.Quiz = Quiz;
 exports.Comment = Comment;
 exports.Tema = Tema;
 exports.User = User;
+exports.sequelize = sequelize;
 
 // sequelize.sync() crea e inicializa la tabla de preguntas en BDD
 
